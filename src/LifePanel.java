@@ -4,31 +4,38 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.JPanel;
 
 public class LifePanel extends JPanel implements Runnable {
 
-	public static int WIDTH = 200;
-	public static int HEIGHT = 200;
+	public static int WIDTH = 800;
+	public static int HEIGHT = 800;
 	public static int CELLSIZE = 10;
 	public static int ROWS = HEIGHT / CELLSIZE;
 	public static int COLUMNS = WIDTH / CELLSIZE;
-	private int CELLCOUNT = ROWS * COLUMNS;
+	//private int CELLCOUNT = ROWS * COLUMNS;
 	public static int STARTINGCELLS = 1000;
-
+	private static int WAITTOSTART = 3;
+	
+	private int worldsizex = 79;
+	private int worldsizey = 79;
+	private boolean [][] world  = new boolean [worldsizex][worldsizey];
+	private boolean [][] futureworld = new boolean [worldsizex][worldsizey];
+	int family = 0;
+	
 	private Thread thread;
 	private Boolean running;
-	boolean ready = false;
+	
 
 	private BufferedImage canvas;
 	private Graphics2D crayon;
-	private int FPS = 1;
+	private int FPS = 10;
 	private double averageFPS;
-
-	public static ArrayList<Cell> cells;
 
 	public LifePanel() {
 		// initialize my parent class before you initialize me
@@ -55,22 +62,7 @@ public class LifePanel extends JPanel implements Runnable {
 		running = true;
 		canvas = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		crayon = (Graphics2D) canvas.getGraphics();
-
-		cells = new ArrayList<Cell>();
-		// initial setup
-		// spawncells(cellCount);
-		// for (int i = 0 ; i < 600; i++){
-		// cells.add(new Cell(i, 10));
-		// }
-		//cells.add(new Cell(10, 10));
-		//cells.add(new Cell(10, 0));
-		//cells.add(new Cell(10, 0));
-
-		//cells.add(new Cell(0, 0));
-		//cells.add(new Cell(0, 10));
-		//cells.add(new Cell(10, 20));
-
-		//cells.add(new Cell(200, 200));
+	
 		spawncells();
 
 		long startTime;
@@ -82,20 +74,17 @@ public class LifePanel extends JPanel implements Runnable {
 		int maxFrameCount = 30;
 
 		long targetTime = 1000 / FPS;
-
+		int startcounter = 0;
 		// Loop
 		while (running) {
-
-			startTime = System.nanoTime();
-
-			if (ready)
-				update();
+			startTime = System.nanoTime();			
+			//if (startcounter > WAITTOSTART)	
+			//	update();
 			render();
 			draw();
-
+			update();
 			URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
 			waitTime = targetTime - URDTimeMillis;
-
 			try {
 				Thread.sleep(waitTime);
 			} catch (Exception e) {
@@ -108,7 +97,7 @@ public class LifePanel extends JPanel implements Runnable {
 				frameCount = 0;
 				totalTime = 0;
 			}
-
+			startcounter++;
 		}
 	}
 
@@ -117,139 +106,230 @@ public class LifePanel extends JPanel implements Runnable {
 	}
 	
 	private void spawncells() {
-		Random random = new Random();
-		for (int i = 0; i < WIDTH; i += 10) {
-			for(int j = 0; j < HEIGHT; j += 10){
-				if (randomBoolean())
-					cells.add(new Cell(i, j));
-			}
-
+		//make whole world dedz
+		for(boolean[] arr : world){
+			Arrays.fill(arr, false);
 		}
+		for(boolean[] arr : futureworld){
+			Arrays.fill(arr, false);
+		}
+		
+		//Glider
+		world[1][1] = true;
+		world[3][1] = true;
+		world[3][2] = true;
+		world[2][2] = true;
+		world[2][3] = true;
+		
+		//Lightweight spaceship
+		world[9][6] = true;
+		world[9][8] = true;
+		world[10][10] = true;
+		world[11][10] = true;
+		world[12][10] = true;
+		world[13][10] = true;	
+		world[13][9] = true;
+		world[13][8] = true;
+		world[12][7] = true;
+		
+		//Blinker 
+		world[20][1] = true;
+		world[20][2] = true;
+		world[20][3] = true;
+		
+		//Toad
+		world[25][3] = true;
+		world[26][3] = true;
+		world[27][3] = true;
+		world[24][4] = true;
+		world[25][4] = true;
+		world[26][4] = true;
+		
+		//BEACON
+		world[1][20] = true;
+		world[2][20] = true;
+		world[1][21] = true;
+		world[2][21] = true;
+		world[3][22] = true;
+		world[4][22] = true;
+		world[3][23] = true;
+		world[4][23] = true;
+		
+		
+
+
+
+
 
 	}
 
+	private void chknw(int inX, int inY){ 
+		if (world[inX - 1][inY - 1])
+			family++;
+	}
+	private void chkn(int inX, int inY){ 
+		if (world[inX][inY - 1])
+			family++;
+	}
+	private void chkne(int inX, int inY){ 
+		if (world[inX + 1][inY - 1])
+			family++;
+	}
+	private void chke(int inX, int inY){ 
+		if (world[inX + 1][inY])
+			family++;
+	}
+	private void chkw(int inX, int inY){ 
+		if (world[inX - 1][inY])
+			family++;
+	}
+	private void chksw(int inX, int inY){ 
+		if (world[inX - 1][inY + 1])
+			family++;
+	}
+	private void chks(int inX, int inY){ 
+		if (world[inX][inY + 1])
+			family++;
+	}
+	private void chkse(int inX, int inY){ 
+		if (world[inX + 1][inY + 1])
+			family++;
+	}
+	
 	private void update() {
-
-		for (int i = 0; i < cells.size(); i++) {
-			int children = 0;
-			Cell currentCell = cells.get(i);
-			//System.out.println("Current Cell # ="
-			//		+ currentCell.getWorldPosition());
-
-			// System.out.println("ALIVE");
-			for (int j = 0; j < cells.size(); j++) {
-				// System.out.println("second for");
-
-				Cell tempcell = cells.get(j);
+		for (int i = 0; i < worldsizex; i++) {
+			for (int j = 0; j < worldsizey; j++) {
+				family = 0;
+				//TOP LEFY CORNER OF ARRAY
+				if (i == 0 && j == 0){
+					chks(i,j);
+					chke(i,j);
+					chkse(i,j);
+				}
+				//TOP RIGHT CORNER OF ARRAY
+				else if (i == worldsizex - 1 && j == 0){
+					chkw(i,j);
+					chksw(i,j);
+					chks(i,j);
+				}
+				//BOTTOM LEFT
+				else if (i == 0 && j == worldsizey -1){
+					chkn(i,j);
+					chkne(i,j);
+					chke(i,j);
+				}
+				//BOTTOM RIGHT
+				else if (i== worldsizex - 1 && j == worldsizey - 1){
+					chkw(i,j);
+					chkn(i,j);
+					chknw(i,j);
+				}
+				//TOP ROW
+				else if (j == 0 && i > 0){
+					chksw(i,j);
+					chks(i,j);
+					chkse(i,j);
+				}
+				//BOTTOM ROW
+				else if (j == worldsizey - 1){
+					chkn(i,j);
+					chkne(i,j);
+					chknw(i,j);
+				}
+				//LEFT ROW
+				else if (i == 0){
+					chkne(i,j);
+					chke(i,j);
+					chkse(i,j);
+				}
+				//RIGHT ROW
+				else if (i == worldsizex - 1){
+					chkw(i,j);
+					chknw(i,j);
+					chksw(i,j);
+				}
+				//MIDDLE GRID
+				else{
+					chknw(i,j);
+					chkn(i,j);
+					chkne(i,j);
+					chkw(i,j);
+					chke(i,j);
+					chksw(i,j);
+					chks(i,j);
+					chkse(i,j);	
+				}
 				
-				// NE
-				if (!tempcell.isDead()) {
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() - 39) {
-						System.out.println("cell NORTHEAST");
-						children++;
-					}
-					// N
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() - 40) {
-						System.out.println("cell NORTH");
-						children++;
-					}
-					// NW
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() - 41) {
-						System.out.println("cell NORTHWEST");
-						children++;
-					}
-					// W
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() - 1) {
-						System.out.println("cell WEST");
-						children++;
-					}
-					// E
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() + 1) {
-						System.out.println("cell WEST");
-						children++;
-					}
-					// SW
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() + 39) {
-						System.out.println("cell SOUTHWEST");
-						children++;
-					}
-					// S
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() + 40) {
-						System.out.println("cell SOUTHWEST");
-						children++;
-					}
-					// SE
-					if (tempcell.getWorldPosition() == currentCell
-							.getWorldPosition() + 41) {
-						System.out.println("cell SOUTHEAST");
-						children++;
+				//IF CURRENT CELL IS ALIVE
+				if (world[i][j]){
+					if (family == 2 || family == 3){
+						futureworld[i][j] = true;
 					}
 				}
+				//IF CURRENT CELL IS DEAD
+				if (!world[i][j]){
+					if (family == 3){
+						futureworld[i][j] = true;
+					}
+				}
+				
+				
 			}
+		}
+		//COPY FUTURE TO PRESENT WORLD
+		for (int i = 0; i < worldsizex - 1; i++){
+			for (int j = 0; j < worldsizex - 1; j++){
+				world[i][j] = futureworld[i][j];
+			}
+		}
+		flushfutureworld();
+	}
 
-			if (!currentCell.isDead()) {
-				if (children < 2) {
-					currentCell.kill();
-					//System.out.println("KILLED Children");
-
-				} else if (children > 3) {
-					currentCell.kill();
-					//System.out.println("KILLED Children");
-				} else {
-				}
-			}
-			if (currentCell.isDead()) {
-				if (children == 3) {
-					currentCell.unkill();
-				}
-			}
+	private void flushfutureworld() {
+		for(boolean[] arr : futureworld){
+			Arrays.fill(arr, false);
 		}
 	}
 
 	// DRAW TO BUFFER
 	private void render() {
-
 		// draw white background
 		Color cl = Color.WHITE;
-		cl.brighter();
-		cl.brighter();
-		cl.brighter();
-		cl.brighter();
 		crayon.setColor(cl);
 		crayon.fillRect(0, 0, WIDTH, HEIGHT);
-
-		// draw fps
-		crayon.setColor(Color.BLUE);
-		crayon.drawString("FPS: " + averageFPS, 10, 100);
-
-		// draw cells
-		for (int i = 0; i < cells.size(); i++) {
-			cells.get(i).draw(crayon);
+		
+		for (int i = 0; i < worldsizex; i++) {
+			for (int j = 0; j < worldsizey; j++) {
+				if (world[i][j] == true) {
+					crayon.setColor(Color.BLUE);
+					crayon.fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE); // NEEDS WIDTH AND
+				}
+				else{
+					crayon.setColor(Color.WHITE);
+					crayon.fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE); // NEEDS WIDTH AND
+				}
+			}
 		}
+
+		
 	}
 
 	// DRAW BUFFER TO SCREEN
 	private void draw() {
-		ready = true;
 		Graphics crayon2 = this.getGraphics();
 		crayon2.drawImage(canvas, 0, 0, null);
 		crayon2.dispose();
+		
 	}
-
-	private void pause() {
-		try {
-			System.in.read();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	private void pressAnyKeyToContinue()
+	 { 
+	        System.out.println("Press any key to continue...");
+	        try
+	        {
+	            System.in.read();
+	        }  
+	        catch(Exception e)
+	        {}  
+	 }
 
 }
