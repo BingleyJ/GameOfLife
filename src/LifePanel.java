@@ -37,6 +37,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	
 	private Thread thread;
 	private Boolean running;
+	private boolean keyDown = false;
 	
 	private BufferedImage canvas;
 	private Graphics2D crayon;
@@ -373,19 +374,21 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	 //Called when the key is pressed down.
-	public void keyPressed(KeyEvent key){
-		switch (key.getKeyCode()){
+	public void keyPressed(KeyEvent key) {
+		//AVOID EXCEPTION FAULT FROM SPAMMIUNG KEYDOWN
+		if (!keyDown) {
+			switch (key.getKeyCode()) {
 			case KeyEvent.VK_0:
-				for(int i = 0; i < worldsizex; i++){
-					for(int j = 0;j < worldsizey; j++){
-						if(randomBoolean()){
+				for (int i = 0; i < worldsizex; i++) {
+					for (int j = 0; j < worldsizey; j++) {
+						if (randomBoolean()) {
 							world[i][j] = true;
 						}
 					}
 				}
 				break;
 			case KeyEvent.VK_1:
-				spawnGlider(); 
+				spawnGlider();
 				break;
 			case KeyEvent.VK_2:
 				spawnLWS();
@@ -412,12 +415,15 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 				FPS++;
 				break;
 			case KeyEvent.VK_H:
-				drawHelp();;
+				drawHelp();
+				;
 				break;
 			case KeyEvent.VK_R:
 				drawRules();
 				break;
+			}
 		}
+		keyDown = true;
 		}
 	
 	private void drawWelcome() {
@@ -464,6 +470,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 
 	// Called when the key is released
 	public void keyReleased(KeyEvent e) {
+		keyDown = false;
 	}
 
 	// Called when a key is typed
