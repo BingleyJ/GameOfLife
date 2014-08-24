@@ -20,6 +20,8 @@ Controls:
 	3 = Spawn Blinker
 	4 = Spawn Toad
 	5 = Spawn Beacon
+	T = Trippy Mode On
+	Y = Trippy Mode off
 
 Rules :
 	- A cell is either live or dead

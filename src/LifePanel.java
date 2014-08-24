@@ -23,14 +23,15 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	private int worldsizey = 80;
 	private boolean [][] world  = new boolean [worldsizex][worldsizey];
 	private boolean [][] futureworld = new boolean [worldsizex][worldsizey];
-	int connectedCells = 0;
+	private int connectedCells = 0;
+	private boolean trippymode = false;
 	
 	private Thread thread;
 	private Boolean running;
 	
 	private BufferedImage canvas;
 	private Graphics2D crayon;
-	private int FPS = 30;
+	private int FPS = 7;
 	private double averageFPS;
 
 	public LifePanel() {
@@ -98,7 +99,13 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	
 	public int randInt() {
 	    Random rand = new Random();
-	    int randomNum = rand.nextInt((worldsizex - 10) + 1) + 10;
+	    int randomNum = rand.nextInt((worldsizex) + 1) + 10;
+	    return randomNum;
+	}
+	
+	public int randmaxminInt(int max, int min) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
 	    return randomNum;
 	}
 	
@@ -153,7 +160,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
 		world[tempintx + 1][tempinty + 1] = true;
-		world[tempintx + 1 + 2][tempinty + 2] = true;
+		world[tempintx + 2][tempinty + 2] = true;
 		world[tempintx + 3][tempinty + 2] = true;
 		world[tempintx + 2][tempinty + 3] = true;
 		world[tempintx + 3][tempinty + 3] = true;
@@ -266,11 +273,42 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		for (int i = 0; i < worldsizex; i++) {
 			for (int j = 0; j < worldsizey; j++) {
 				if (world[i][j] == true) {
-					crayon.setColor(Color.BLUE);
+					if (trippymode) {
+						int tempNum = randmaxminInt(8, 1);
+						switch (tempNum) {
+						case 1:
+							crayon.setColor(Color.CYAN);
+							break;
+						case 2:
+							crayon.setColor(Color.GREEN);
+							break;
+						case 3:
+							crayon.setColor(Color.BLUE);
+							break;
+						case 4:
+							crayon.setColor(Color.PINK);
+							break;
+						case 5:
+							crayon.setColor(Color.ORANGE);
+							break;
+						case 6:
+							crayon.setColor(Color.MAGENTA);
+							break;
+						case 7:
+							crayon.setColor(Color.YELLOW);
+							break;
+						case 8:
+							crayon.setColor(Color.RED);
+							break;
+						
+						}
+						
+					}
+					else {crayon.setColor(Color.BLACK);}
 					crayon.fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE); // NEEDS WIDTH AND
 				}
 				else{
-					crayon.setColor(Color.WHITE);
+					crayon.setColor(Color.GRAY);
 					crayon.fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE); // NEEDS WIDTH AND
 				}
 			}
@@ -349,6 +387,12 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 				break;
 			case KeyEvent.VK_5:
 				spawnBeacon();
+				break;
+			case KeyEvent.VK_T:
+				trippymode = true;
+				break;
+			case KeyEvent.VK_Y:
+				trippymode = false;
 				break;
 		}
 	}
