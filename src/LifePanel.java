@@ -18,11 +18,6 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	public static int WIDTH = 800;
 	public static int HEIGHT = 800;
 	public static int CELLSIZE = 10;
-	public static int ROWS = HEIGHT / CELLSIZE;
-	public static int COLUMNS = WIDTH / CELLSIZE;
-	//private int CELLCOUNT = ROWS * COLUMNS;
-	public static int STARTINGCELLS = 1000;
-	private static int WAITTOSTART = 3;
 	
 	private int worldsizex = 80;
 	private int worldsizey = 80;
@@ -33,10 +28,9 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	private Thread thread;
 	private Boolean running;
 	
-
 	private BufferedImage canvas;
 	private Graphics2D crayon;
-	private int FPS = 1;
+	private int FPS = 30;
 	private double averageFPS;
 
 	public LifePanel() {
@@ -61,13 +55,12 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 
 	// the thread runsa this
 	public void run() {
-
 		running = true;
 		canvas = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		crayon = (Graphics2D) canvas.getGraphics();
-	
+		// CREATE 2D ARRAYS OF DEAD CELLS
 		spawncells();
-
+		//FPS STUFF
 		long startTime;
 		long URDTimeMillis;
 		long waitTime;
@@ -75,8 +68,8 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		int frameCount = 0;
 		int maxFrameCount = 30;
 		long targetTime = 1000 / FPS;
-		int startcounter = 0;
-		// Loop
+	
+		//GAMELOOP--------------------------------------]
 		while (running) {
 			startTime = System.nanoTime();			
 			render();
@@ -85,7 +78,6 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 			URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
 			waitTime = targetTime - URDTimeMillis;
 			try {
-				//Thread.sleep(10000000);
 				Thread.sleep(waitTime);
 			} catch (Exception e) {
 			}
@@ -97,8 +89,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 				frameCount = 0;
 				totalTime = 0;
 			}
-			startcounter++;
-		}
+		}//GAMELOOP END--------------------------------------]
 	}
 
 	public boolean randomBoolean(){
@@ -155,8 +146,17 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		
 	}
 	
-	private void spawnBeacon(){
-		
+	private void spawnBeacon() {
+		int tempintx = randInt();
+		int tempinty = randInt();
+		world[tempintx][tempinty] = true;
+		world[tempintx + 1][tempinty] = true;
+		world[tempintx][tempinty + 1] = true;
+		world[tempintx + 1][tempinty + 1] = true;
+		world[tempintx + 1 + 2][tempinty + 2] = true;
+		world[tempintx + 3][tempinty + 2] = true;
+		world[tempintx + 2][tempinty + 3] = true;
+		world[tempintx + 3][tempinty + 3] = true;
 	}
 	
 	private void spawncells() {
@@ -167,48 +167,6 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		for(boolean[] arr : futureworld){
 			Arrays.fill(arr, false);
 		}
-		
-	
-	
-	
-		
-/*		
-		
-		
-		//Toad
-		world[25][3] = true;
-		world[26][3] = true;
-		world[27][3] = true;
-		world[24][4] = true;
-		world[25][4] = true;
-		world[26][4] = true;
-		
-		//BEACON
-		world[1][20] = true;
-		world[2][20] = true;
-		world[1][21] = true;
-		world[2][21] = true;
-		world[3][22] = true;
-		world[4][22] = true;
-		world[3][23] = true;
-		world[4][23] = true;
-		
-		//PULSAR
-		world[10][40] = true;
-		world[11][40] = true;
-		world[12][40] = true;
-		world[13][38] = true;
-		world[13][37] = true;
-		world[13][36] = true;
-		world[12][35] = true;
-		world[11][35] = true;
-		world[10][35] = true;
-		world[8][36] = true;
-		world[8][37] = true;
-		world[8][38] = true;
-		*/
-		
-		
 		}
 		
 		
@@ -393,23 +351,14 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 				spawnBeacon();
 				break;
 		}
-		
-		
-		System.out.println("Key Pressed!!!");
-				
 	}
 	
-	//Called when the key is released	
-	public void keyReleased(KeyEvent e){
-		System.out.println("Key Released!!!");
-				
+	// Called when the key is released
+	public void keyReleased(KeyEvent e) {
 	}
-	//Called when a key is typed
-	public void keyTyped(KeyEvent e){
-	
-	
-}
 
+	// Called when a key is typed
+	public void keyTyped(KeyEvent e) {
+	}
 
 }
-
