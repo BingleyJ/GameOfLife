@@ -1,9 +1,11 @@
 GameOfLife
 
 ==========
+Professor : Lonnie Bowe
 Name : John Bingley 
 Class : DataStructures
 Purpose : Simulate Conway's Degree Of Awesome
+boolean BugFree = false;
 
 
 
@@ -22,10 +24,16 @@ Controls:
 	5 = Spawn Beacon
 	T = Trippy Mode On
 	Y = Trippy Mode off
+	H = CONTROLS
+	R = RULES
+	SPACE = Reset Grid
 
 Rules :
-	- A cell is either live or dead
-	- Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-        - Any live cell with two or three live neighbours lives on to the next generation.
-        - Any live cell with more than three live neighbours dies, as if by overcrowding.
-        - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+	1) A cell is either live or dead
+	2) Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+        3) Any live cell with two or three live neighbours lives on to the next generation.
+        4) Any live cell with more than three live neighbours dies, as if by overcrowding.
+        5) Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+
+Some bugs exist for sure. 
+

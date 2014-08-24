@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -11,7 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class LifePanel extends JPanel implements Runnable, KeyListener {
 
@@ -19,11 +24,15 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	public static int HEIGHT = 800;
 	public static int CELLSIZE = 10;
 	
+	public static int HELPSCREENLOCATIONX = 280;
+	public static int HELPSCREENLOCATIONY = 280;
+	
 	private int worldsizex = 80;
 	private int worldsizey = 80;
 	private boolean [][] world  = new boolean [worldsizex][worldsizey];
 	private boolean [][] futureworld = new boolean [worldsizex][worldsizey];
 	private int connectedCells = 0;
+	
 	private boolean trippymode = false;
 	
 	private Thread thread;
@@ -31,7 +40,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	
 	private BufferedImage canvas;
 	private Graphics2D crayon;
-	private int FPS = 7;
+	public int FPS = 10;
 	private double averageFPS;
 
 	public LifePanel() {
@@ -71,6 +80,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		long targetTime = 1000 / FPS;
 	
 		//GAMELOOP--------------------------------------]
+		drawWelcome();
 		while (running) {
 			startTime = System.nanoTime();			
 			render();
@@ -97,9 +107,9 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	    return Math.random() < 0.5;
 	}
 	
-	public int randInt() {
+	public int randIntInsideWorld() {
 	    Random rand = new Random();
-	    int randomNum = rand.nextInt((worldsizex) + 1) + 10;
+	    int randomNum = rand.nextInt((worldsizex - 5) + 1) + 5;
 	    return randomNum;
 	}
 	
@@ -110,18 +120,19 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnGlider(){
-				int tempintx = randInt();
-				int tempinty = randInt();
-				world[tempintx][tempinty] = true;
-				world[tempintx + 2][tempinty] = true;
-				world[tempintx + 2][tempinty + 1] = true;
-				world[tempintx + 1][tempinty + 1] = true;
-				world[tempintx + 1][tempinty + 2] = true;
+		int tempintx = randIntInsideWorld();
+		int tempinty = randIntInsideWorld();
+			//SE BOUND
+			world[tempintx][tempinty] = true;
+			world[tempintx + 2][tempinty] = true;
+			world[tempintx + 2][tempinty + 1] = true;
+			world[tempintx + 1][tempinty + 1] = true;
+			world[tempintx + 1][tempinty + 2] = true;
 	}
 	
 	private void spawnLWS(){
-		int tempintx = randInt();
-		int tempinty = randInt();
+		int tempintx = randIntInsideWorld();
+		int tempinty = randIntInsideWorld();
 		world[tempintx][tempinty] = true;
 		world[tempintx][tempinty + 2] = true;
 		world[tempintx + 1][tempinty + 4] = true;
@@ -134,16 +145,16 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnBlinker(){
-		int tempintx = randInt();
-		int tempinty = randInt();
+		int tempintx = randIntInsideWorld();
+		int tempinty = randIntInsideWorld();
 		world[tempintx][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
 		world[tempintx][tempinty + 2] = true;
 	}
 	
 	private void spawnToad(){
-		int tempintx = randInt();
-		int tempinty = randInt();
+		int tempintx = randIntInsideWorld();
+		int tempinty = randIntInsideWorld();
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx + 2][tempinty] = true;
 		world[tempintx + 3][tempinty] = true;
@@ -154,8 +165,8 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnBeacon() {
-		int tempintx = randInt();
-		int tempinty = randInt();
+		int tempintx = randIntInsideWorld();
+		int tempinty = randIntInsideWorld();
 		world[tempintx][tempinty] = true;
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
@@ -394,9 +405,63 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 			case KeyEvent.VK_Y:
 				trippymode = false;
 				break;
+			case KeyEvent.VK_SPACE:
+				spawncells();
+				break;
+			case KeyEvent.VK_COMMA:
+				FPS++;
+				break;
+			case KeyEvent.VK_H:
+				drawHelp();;
+				break;
+			case KeyEvent.VK_R:
+				drawRules();
+				break;
 		}
+		}
+	
+	private void drawWelcome() {
+		String[] options = {"START"};
+		JPanel panel = new JPanel();
+		
+		JLabel lbl = new JLabel("Welcome! Press H for controls");									
+		panel.add(lbl);
+		int selectedOption = JOptionPane.showOptionDialog(null, panel, "Conway's Game Of Life", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
 	}
 	
+	private void drawRules() {
+		JOptionPane pane = new JOptionPane(
+				"1) A cell is either live or dead\n"
+						+ "2) Any live cell with fewer than two live neighbours dies, as if caused by under-population.\n"
+						+ "3) Any live cell with two or three live neighbours lives on to the next generation.\n"
+						+ "4) Any live cell with more than three live neighbours dies, as if by overcrowding.\n"
+						+ "5) Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.");
+
+		JDialog d = pane.createDialog("Conway's Game Of Life Rules");
+		
+		d.setLocation(320, 280);
+		d.setVisible(true);
+	}
+	
+	private void drawHelp() {
+		String offsetToCenter = "               ";
+		JOptionPane pane = new JOptionPane(offsetToCenter
+				+ "0 - Randomize Cells\n" + offsetToCenter + "1 - Glider\n"
+				+ offsetToCenter + "2 - Lightweight Ship\n" + offsetToCenter
+				+ "3 - Blinker\n" + offsetToCenter + "4 - Toad            \n"
+				+ offsetToCenter + "5 - Beacon Glider\n" + offsetToCenter
+				+ "T - Trippy Mode On  \n" + offsetToCenter
+				+ "Y - Trippy Mode Off\n" + offsetToCenter
+				+ "R - Rules\n" + offsetToCenter
+				+ "SPACEBAR - Restart  \n" + offsetToCenter
+
+		);
+		JDialog d = pane.createDialog("Spawning Guide");
+		d.setLocation(320, 280);
+		d.setVisible(true);
+	
+	}
+
 	// Called when the key is released
 	public void keyReleased(KeyEvent e) {
 	}

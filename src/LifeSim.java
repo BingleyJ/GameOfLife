@@ -1,5 +1,13 @@
 import javax.swing.JFrame;
 
+/*
+Title: GameOfLife
+Professor : Lonnie Bowe
+Name : John Bingley 
+Class : DataStructures
+Purpose : Simulate Conway's Degree Of Awesome
+Check READ.md for more info
+ */
 
 public class LifeSim {
 	
