@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.sql.Time;
@@ -11,7 +13,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class LifePanel extends JPanel implements Runnable {
+public class LifePanel extends JPanel implements Runnable, KeyListener {
 
 	public static int WIDTH = 800;
 	public static int HEIGHT = 800;
@@ -22,11 +24,11 @@ public class LifePanel extends JPanel implements Runnable {
 	public static int STARTINGCELLS = 1000;
 	private static int WAITTOSTART = 3;
 	
-	private int worldsizex = 79;
-	private int worldsizey = 79;
+	private int worldsizex = 80;
+	private int worldsizey = 80;
 	private boolean [][] world  = new boolean [worldsizex][worldsizey];
 	private boolean [][] futureworld = new boolean [worldsizex][worldsizey];
-	int family = 0;
+	int connectedCells = 0;
 	
 	private Thread thread;
 	private Boolean running;
@@ -34,7 +36,7 @@ public class LifePanel extends JPanel implements Runnable {
 
 	private BufferedImage canvas;
 	private Graphics2D crayon;
-	private int FPS = 10;
+	private int FPS = 1;
 	private double averageFPS;
 
 	public LifePanel() {
@@ -54,6 +56,7 @@ public class LifePanel extends JPanel implements Runnable {
 			thread = new Thread(this);
 			thread.start();
 		}
+		addKeyListener(this);
 	}
 
 	// the thread runsa this
@@ -69,23 +72,20 @@ public class LifePanel extends JPanel implements Runnable {
 		long URDTimeMillis;
 		long waitTime;
 		long totalTime = 0;
-
 		int frameCount = 0;
 		int maxFrameCount = 30;
-
 		long targetTime = 1000 / FPS;
 		int startcounter = 0;
 		// Loop
 		while (running) {
 			startTime = System.nanoTime();			
-			//if (startcounter > WAITTOSTART)	
-			//	update();
 			render();
 			draw();
 			update();
 			URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
 			waitTime = targetTime - URDTimeMillis;
 			try {
+				//Thread.sleep(10000000);
 				Thread.sleep(waitTime);
 			} catch (Exception e) {
 			}
@@ -105,6 +105,60 @@ public class LifePanel extends JPanel implements Runnable {
 	    return Math.random() < 0.5;
 	}
 	
+	public int randInt() {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt((worldsizex - 10) + 1) + 10;
+	    return randomNum;
+	}
+	
+	private void spawnGlider(){
+				int tempintx = randInt();
+				int tempinty = randInt();
+				world[tempintx][tempinty] = true;
+				world[tempintx + 2][tempinty] = true;
+				world[tempintx + 2][tempinty + 1] = true;
+				world[tempintx + 1][tempinty + 1] = true;
+				world[tempintx + 1][tempinty + 2] = true;
+	}
+	
+	private void spawnLWS(){
+		int tempintx = randInt();
+		int tempinty = randInt();
+		world[tempintx][tempinty] = true;
+		world[tempintx][tempinty + 2] = true;
+		world[tempintx + 1][tempinty + 4] = true;
+		world[tempintx + 2][tempinty + 4] = true;
+		world[tempintx + 3][tempinty + 4] = true;
+		world[tempintx + 4][tempinty + 4] = true;	
+		world[tempintx + 4][tempinty + 3] = true;
+		world[tempintx + 4][tempinty + 2] = true;
+		world[tempintx + 3][tempinty + 1] = true;
+	}
+	
+	private void spawnBlinker(){
+		int tempintx = randInt();
+		int tempinty = randInt();
+		world[tempintx][tempinty] = true;
+		world[tempintx][tempinty + 1] = true;
+		world[tempintx][tempinty + 2] = true;
+	}
+	
+	private void spawnToad(){
+		int tempintx = randInt();
+		int tempinty = randInt();
+		world[tempintx + 1][tempinty] = true;
+		world[tempintx + 2][tempinty] = true;
+		world[tempintx + 3][tempinty] = true;
+		world[tempintx][tempinty+1] = true;
+		world[tempintx + 1][tempinty+1] = true;
+		world[tempintx + 2][tempinty+1] = true;
+		
+	}
+	
+	private void spawnBeacon(){
+		
+	}
+	
 	private void spawncells() {
 		//make whole world dedz
 		for(boolean[] arr : world){
@@ -114,28 +168,12 @@ public class LifePanel extends JPanel implements Runnable {
 			Arrays.fill(arr, false);
 		}
 		
-		//Glider
-		world[1][1] = true;
-		world[3][1] = true;
-		world[3][2] = true;
-		world[2][2] = true;
-		world[2][3] = true;
+	
+	
+	
 		
-		//Lightweight spaceship
-		world[9][6] = true;
-		world[9][8] = true;
-		world[10][10] = true;
-		world[11][10] = true;
-		world[12][10] = true;
-		world[13][10] = true;	
-		world[13][9] = true;
-		world[13][8] = true;
-		world[12][7] = true;
+/*		
 		
-		//Blinker 
-		world[20][1] = true;
-		world[20][2] = true;
-		world[20][3] = true;
 		
 		//Toad
 		world[25][3] = true;
@@ -155,51 +193,29 @@ public class LifePanel extends JPanel implements Runnable {
 		world[3][23] = true;
 		world[4][23] = true;
 		
+		//PULSAR
+		world[10][40] = true;
+		world[11][40] = true;
+		world[12][40] = true;
+		world[13][38] = true;
+		world[13][37] = true;
+		world[13][36] = true;
+		world[12][35] = true;
+		world[11][35] = true;
+		world[10][35] = true;
+		world[8][36] = true;
+		world[8][37] = true;
+		world[8][38] = true;
+		*/
 		
-
-
-
-
-
-	}
-
-	private void chknw(int inX, int inY){ 
-		if (world[inX - 1][inY - 1])
-			family++;
-	}
-	private void chkn(int inX, int inY){ 
-		if (world[inX][inY - 1])
-			family++;
-	}
-	private void chkne(int inX, int inY){ 
-		if (world[inX + 1][inY - 1])
-			family++;
-	}
-	private void chke(int inX, int inY){ 
-		if (world[inX + 1][inY])
-			family++;
-	}
-	private void chkw(int inX, int inY){ 
-		if (world[inX - 1][inY])
-			family++;
-	}
-	private void chksw(int inX, int inY){ 
-		if (world[inX - 1][inY + 1])
-			family++;
-	}
-	private void chks(int inX, int inY){ 
-		if (world[inX][inY + 1])
-			family++;
-	}
-	private void chkse(int inX, int inY){ 
-		if (world[inX + 1][inY + 1])
-			family++;
-	}
-	
+		
+		}
+		
+		
 	private void update() {
 		for (int i = 0; i < worldsizex; i++) {
 			for (int j = 0; j < worldsizey; j++) {
-				family = 0;
+				connectedCells = 0;
 				//TOP LEFY CORNER OF ARRAY
 				if (i == 0 && j == 0){
 					chks(i,j);
@@ -259,21 +275,18 @@ public class LifePanel extends JPanel implements Runnable {
 					chks(i,j);
 					chkse(i,j);	
 				}
-				
 				//IF CURRENT CELL IS ALIVE
 				if (world[i][j]){
-					if (family == 2 || family == 3){
+					if (connectedCells == 2 || connectedCells == 3){
 						futureworld[i][j] = true;
 					}
 				}
 				//IF CURRENT CELL IS DEAD
 				if (!world[i][j]){
-					if (family == 3){
+					if (connectedCells == 3){
 						futureworld[i][j] = true;
 					}
 				}
-				
-				
 			}
 		}
 		//COPY FUTURE TO PRESENT WORLD
@@ -285,19 +298,13 @@ public class LifePanel extends JPanel implements Runnable {
 		flushfutureworld();
 	}
 
-	private void flushfutureworld() {
-		for(boolean[] arr : futureworld){
-			Arrays.fill(arr, false);
-		}
-	}
-
 	// DRAW TO BUFFER
 	private void render() {
 		// draw white background
 		Color cl = Color.WHITE;
 		crayon.setColor(cl);
 		crayon.fillRect(0, 0, WIDTH, HEIGHT);
-		
+		//DRAW LIVE CELLS TO BOARD
 		for (int i = 0; i < worldsizex; i++) {
 			for (int j = 0; j < worldsizey; j++) {
 				if (world[i][j] == true) {
@@ -310,8 +317,6 @@ public class LifePanel extends JPanel implements Runnable {
 				}
 			}
 		}
-
-		
 	}
 
 	// DRAW BUFFER TO SCREEN
@@ -319,17 +324,92 @@ public class LifePanel extends JPanel implements Runnable {
 		Graphics crayon2 = this.getGraphics();
 		crayon2.drawImage(canvas, 0, 0, null);
 		crayon2.dispose();
-		
 	}
-	private void pressAnyKeyToContinue()
-	 { 
-	        System.out.println("Press any key to continue...");
-	        try
-	        {
-	            System.in.read();
-	        }  
-	        catch(Exception e)
-	        {}  
-	 }
+	
+	private void flushfutureworld() {
+		for(boolean[] arr : futureworld){
+			Arrays.fill(arr, false);
+		}
+	}
+	
+	private void chknw(int inX, int inY){ 
+		if (world[inX - 1][inY - 1])
+			connectedCells++;
+	}
+	private void chkn(int inX, int inY){ 
+		if (world[inX][inY - 1])
+			connectedCells++;
+	}
+	private void chkne(int inX, int inY){ 
+		if (world[inX + 1][inY - 1])
+			connectedCells++;
+	}
+	private void chke(int inX, int inY){ 
+		if (world[inX + 1][inY])
+			connectedCells++;
+	}
+	private void chkw(int inX, int inY){ 
+		if (world[inX - 1][inY])
+			connectedCells++;
+	}
+	private void chksw(int inX, int inY){ 
+		if (world[inX - 1][inY + 1])
+			connectedCells++;
+	}
+	private void chks(int inX, int inY){ 
+		if (world[inX][inY + 1])
+			connectedCells++;
+	}
+	private void chkse(int inX, int inY){ 
+		if (world[inX + 1][inY + 1])
+			connectedCells++;
+	}
+	
+	 //Called when the key is pressed down.
+	public void keyPressed(KeyEvent key){
+		switch (key.getKeyCode()){
+			case KeyEvent.VK_0:
+				for(int i = 0; i < worldsizex; i++){
+					for(int j = 0;j < worldsizey; j++){
+						if(randomBoolean()){
+							world[i][j] = true;
+						}
+					}
+				}
+				break;
+			case KeyEvent.VK_1:
+				spawnGlider(); 
+				break;
+			case KeyEvent.VK_2:
+				spawnLWS();
+				break;
+			case KeyEvent.VK_3:
+				spawnBlinker();
+				break;
+			case KeyEvent.VK_4:
+				spawnToad();
+				break;
+			case KeyEvent.VK_5:
+				spawnBeacon();
+				break;
+		}
+		
+		
+		System.out.println("Key Pressed!!!");
+				
+	}
+	
+	//Called when the key is released	
+	public void keyReleased(KeyEvent e){
+		System.out.println("Key Released!!!");
+				
+	}
+	//Called when a key is typed
+	public void keyTyped(KeyEvent e){
+	
+	
+}
+
 
 }
+
