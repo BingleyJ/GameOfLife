@@ -121,8 +121,8 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnGlider(){
-		int tempintx = randIntInsideWorld();
-		int tempinty = randIntInsideWorld();
+		int tempintx = randmaxminInt(worldsizex - 10, 10);
+		int tempinty = randmaxminInt(worldsizey - 10, 10);
 			//SE BOUND
 			world[tempintx][tempinty] = true;
 			world[tempintx + 2][tempinty] = true;
@@ -132,8 +132,8 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnLWS(){
-		int tempintx = randIntInsideWorld();
-		int tempinty = randIntInsideWorld();
+		int tempintx = randmaxminInt(worldsizex - 10, 10);
+		int tempinty = randmaxminInt(worldsizey - 10, 10);
 		world[tempintx][tempinty] = true;
 		world[tempintx][tempinty + 2] = true;
 		world[tempintx + 1][tempinty + 4] = true;
@@ -146,16 +146,16 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnBlinker(){
-		int tempintx = randIntInsideWorld();
-		int tempinty = randIntInsideWorld();
+		int tempintx = randmaxminInt(worldsizex - 10, 10);
+		int tempinty = randmaxminInt(worldsizey - 10, 10);
 		world[tempintx][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
 		world[tempintx][tempinty + 2] = true;
 	}
 	
 	private void spawnToad(){
-		int tempintx = randIntInsideWorld();
-		int tempinty = randIntInsideWorld();
+		int tempintx = randmaxminInt(worldsizex - 5, 5);;
+		int tempinty = randmaxminInt(worldsizey - 5, 5);
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx + 2][tempinty] = true;
 		world[tempintx + 3][tempinty] = true;
@@ -166,8 +166,8 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 	}
 	
 	private void spawnBeacon() {
-		int tempintx = randIntInsideWorld();
-		int tempinty = randIntInsideWorld();
+		int tempintx = randmaxminInt(worldsizex - 10, 10);
+		int tempinty = randmaxminInt(worldsizey - 10, 10);
 		world[tempintx][tempinty] = true;
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
