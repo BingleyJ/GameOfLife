@@ -222,24 +222,32 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 					chksw(i,j);
 					chks(i,j);
 					chkse(i,j);
+					chke(i,j);
+					chkw(i,j);
 				}
 				//BOTTOM ROW
 				else if (j == worldsizey - 1){
 					chkn(i,j);
 					chkne(i,j);
 					chknw(i,j);
+					chke(i,j);
+					chkw(i,j);
 				}
 				//LEFT ROW
 				else if (i == 0){
 					chkne(i,j);
 					chke(i,j);
 					chkse(i,j);
+					chkn(i,j);
+					chks(i,j);
 				}
 				//RIGHT ROW
-				else if (i == worldsizex - 1){
+				else if (i == worldsizex -1){
 					chkw(i,j);
 					chknw(i,j);
 					chksw(i,j);
+					chkn(i,j);
+					chks(i,j);
 				}
 				//MIDDLE GRID
 				else{
@@ -416,7 +424,6 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 				break;
 			case KeyEvent.VK_H:
 				drawHelp();
-				;
 				break;
 			case KeyEvent.VK_R:
 				drawRules();
@@ -432,7 +439,7 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		
 		JLabel lbl = new JLabel("Welcome! Press H for controls");									
 		panel.add(lbl);
-		int selectedOption = JOptionPane.showOptionDialog(null, panel, "Conway's Game Of Life", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options , options[0]);
+		int selectedOption = JOptionPane.showOptionDialog(null, panel, "Conway's Game Of Life", JOptionPane.NO_OPTION, JOptionPane.DEFAULT_OPTION, null, options , options[0]);
 	}
 	
 	private void drawRules() {
@@ -444,7 +451,6 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 						+ "5) Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.");
 
 		JDialog d = pane.createDialog("Conway's Game Of Life Rules");
-		
 		d.setLocation(320, 280);
 		d.setVisible(true);
 	}
