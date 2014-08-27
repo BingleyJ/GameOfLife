@@ -4,28 +4,28 @@ import java.util.Arrays;
 
 
 public class World {
-	private int worldsizex;
-	private int worldsizey;
+	private int worldSizeX;
+	private int worldSizeY;
 	private boolean [][] world;
-	private boolean [][] futureworld;;
-	public static int CELLSIZE = 10;
+	private boolean [][] futureWorld;;
+	public int cellSize = 10;
 	private int connectedCells = 0;
 	private Helper helper = new Helper();
-	private boolean trippymode = false;
+	private boolean trippyMode = false;
 
 	
 	public World(int inWidth, int inHeight){
-		this.worldsizex = inWidth / 10;
-		this.worldsizey = inHeight / 10;
-		world = new boolean [worldsizex][worldsizey];
-		futureworld = new boolean [worldsizex][worldsizey];
+		this.worldSizeX = inWidth / 10;
+		this.worldSizeY = inHeight / 10;
+		world = new boolean [worldSizeX][worldSizeY];
+		futureWorld = new boolean [worldSizeX][worldSizeY];
 		spawncells();
 		
 	}
 	
 	public void update(){
-		for (int i = 0; i < worldsizex; i++) {
-			for (int j = 0; j < worldsizey; j++) {
+		for (int i = 0; i < worldSizeX; i++) {
+			for (int j = 0; j < worldSizeY; j++) {
 				connectedCells = 0;
 				//TOP LEFY CORNER OF ARRAY
 				if (i == 0 && j == 0){
@@ -34,19 +34,19 @@ public class World {
 					chkse(i,j);
 				}
 				//TOP RIGHT CORNER OF ARRAY
-				else if (i == worldsizex - 1 && j == 0){
+				else if (i == worldSizeX - 1 && j == 0){
 					chkw(i,j);
 					chksw(i,j);
 					chks(i,j);
 				}
 				//BOTTOM LEFT
-				else if (i == 0 && j == worldsizey -1){
+				else if (i == 0 && j == worldSizeY -1){
 					chkn(i,j);
 					chkne(i,j);
 					chke(i,j);
 				}
 				//BOTTOM RIGHT
-				else if (i== worldsizex - 1 && j == worldsizey - 1){
+				else if (i== worldSizeX - 1 && j == worldSizeY - 1){
 					chkw(i,j);
 					chkn(i,j);
 					chknw(i,j);
@@ -60,7 +60,7 @@ public class World {
 					chkw(i,j);
 				}
 				//BOTTOM ROW
-				else if (j == worldsizey - 1){
+				else if (j == worldSizeY - 1){
 					chkn(i,j);
 					chkne(i,j);
 					chknw(i,j);
@@ -76,7 +76,7 @@ public class World {
 					chks(i,j);
 				}
 				//RIGHT ROW
-				else if (i == worldsizex -1){
+				else if (i == worldSizeX -1){
 					chkw(i,j);
 					chknw(i,j);
 					chksw(i,j);
@@ -97,21 +97,21 @@ public class World {
 				//IF CURRENT CELL IS ALIVE
 				if (world[i][j]){
 					if (connectedCells == 2 || connectedCells == 3){
-						futureworld[i][j] = true;
+						futureWorld[i][j] = true;
 					}
 				}
 				//IF CURRENT CELL IS DEAD
 				if (!world[i][j]){
 					if (connectedCells == 3){
-						futureworld[i][j] = true;
+						futureWorld[i][j] = true;
 					}
 				}
 			}
 		}
 		//COPY FUTURE TO PRESENT WORLD
-		for (int i = 0; i < worldsizex - 1; i++){
-			for (int j = 0; j < worldsizey - 1; j++){
-				world[i][j] = futureworld[i][j];
+		for (int i = 0; i < worldSizeX - 1; i++){
+			for (int j = 0; j < worldSizeY - 1; j++){
+				world[i][j] = futureWorld[i][j];
 			}
 		}
 		flushfutureworld();
@@ -119,10 +119,10 @@ public class World {
 	}
 	
 	public void Draw(Graphics2D crayon){
-		for (int i = 0; i < worldsizex; i++) {
-			for (int j = 0; j < worldsizey; j++) {
+		for (int i = 0; i < worldSizeX; i++) {
+			for (int j = 0; j < worldSizeY; j++) {
 				if (world[i][j] == true) {
-					if (trippymode) {
+					if (trippyMode) {
 						int tempNum = helper.randmaxminInt(8, 1);
 						switch (tempNum) {
 						case 1:
@@ -149,25 +149,22 @@ public class World {
 						case 8:
 							crayon.setColor(Color.RED);
 							break;
-						
 						}
-						
 					}
 					else {crayon.setColor(Color.BLACK);}
-					crayon.fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE); // NEEDS WIDTH AND
+					crayon.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
 				}
 				else{
 					crayon.setColor(Color.GRAY);
-					crayon.fillRect(i * CELLSIZE, j * CELLSIZE, CELLSIZE, CELLSIZE); // NEEDS WIDTH AND
+					crayon.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
 				}
 			}
 		}
-		
 	}
 	
 	public void spawnGlider(){
-		int tempintx = helper.randmaxminInt(worldsizex - 10, 10);
-		int tempinty = helper.randmaxminInt(worldsizey - 10, 10);
+		int tempintx = helper.randmaxminInt(worldSizeX - 10, 10);
+		int tempinty = helper.randmaxminInt(worldSizeY - 10, 10);
 			//SE BOUND
 			world[tempintx][tempinty] = true;
 			world[tempintx + 2][tempinty] = true;
@@ -177,8 +174,8 @@ public class World {
 	}
 	
 	public void spawnLWS(){
-		int tempintx = helper.randmaxminInt(worldsizex - 10, 10);
-		int tempinty = helper.randmaxminInt(worldsizey - 10, 10);
+		int tempintx = helper.randmaxminInt(worldSizeX - 10, 10);
+		int tempinty = helper.randmaxminInt(worldSizeY - 10, 10);
 		world[tempintx][tempinty] = true;
 		world[tempintx][tempinty + 2] = true;
 		world[tempintx + 1][tempinty + 4] = true;
@@ -191,16 +188,16 @@ public class World {
 	}
 	
 	public void spawnBlinker(){
-		int tempintx = helper.randmaxminInt(worldsizex - 10, 10);
-		int tempinty = helper.randmaxminInt(worldsizey - 10, 10);
+		int tempintx = helper.randmaxminInt(worldSizeX - 10, 10);
+		int tempinty = helper.randmaxminInt(worldSizeY - 10, 10);
 		world[tempintx][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
 		world[tempintx][tempinty + 2] = true;
 	}
 	
 	public void spawnToad(){
-		int tempintx = helper.randmaxminInt(worldsizex - 5, 5);;
-		int tempinty = helper.randmaxminInt(worldsizey - 5, 5);
+		int tempintx = helper.randmaxminInt(worldSizeX - 5, 5);;
+		int tempinty = helper.randmaxminInt(worldSizeY - 5, 5);
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx + 2][tempinty] = true;
 		world[tempintx + 3][tempinty] = true;
@@ -211,8 +208,8 @@ public class World {
 	}
 	
 	public void spawnBeacon() {
-		int tempintx = helper.randmaxminInt(worldsizex - 10, 10);
-		int tempinty = helper.randmaxminInt(worldsizey - 10, 10);
+		int tempintx = helper.randmaxminInt(worldSizeX - 10, 10);
+		int tempinty = helper.randmaxminInt(worldSizeY - 10, 10);
 		world[tempintx][tempinty] = true;
 		world[tempintx + 1][tempinty] = true;
 		world[tempintx][tempinty + 1] = true;
@@ -228,31 +225,31 @@ public class World {
 		for(boolean[] arr : world){
 			Arrays.fill(arr, false);
 		}
-		for(boolean[] arr : futureworld){
+		for(boolean[] arr : futureWorld){
 			Arrays.fill(arr, false);
 		}
 		
 	}
 
 	public int getWorldsizex() {
-		return worldsizex;
+		return worldSizeX;
 	}
 
 	public void setWorldsizex(int worldsizex) {
-		this.worldsizex = worldsizex;
+		this.worldSizeX = worldsizex;
 	}
 
 	public int getWorldsizey() {
-		return worldsizey;
+		return worldSizeY;
 	}
 
 	public void setWorldsizey(int worldsizey) {
-		this.worldsizey = worldsizey;
+		this.worldSizeY = worldsizey;
 	}
 	
 
 	private void flushfutureworld() {
-		for(boolean[] arr : futureworld){
+		for(boolean[] arr : futureWorld){
 			Arrays.fill(arr, false);
 		}
 	}
@@ -290,21 +287,16 @@ public class World {
 			connectedCells++;
 	}
 	public void randomWorld(){
-		for (int i = 0; i < worldsizex; i++) {
-			for (int j = 0; j < worldsizey; j++) {
+		for (int i = 0; i < worldSizeX; i++) {
+			for (int j = 0; j < worldSizeY; j++) {
 				if (helper.randomBoolean()) {
 					world[i][j] = true;
 				}
 			}
 		}
-		
 	}
-
-	public boolean isTrippymode() {
-		return trippymode;
-	}
-
+	
 	public void setTrippymode(boolean trippymode) {
-		this.trippymode = trippymode;
+		this.trippyMode = trippymode;
 	}
 }
