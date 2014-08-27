@@ -72,9 +72,8 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 		int frameCount = 0;
 		int maxFrameCount = 30;
 		long targetTime = 1000 / FPS;
-	
-		//GAMELOOP--------------------------------------]
 		popups.drawWelcome();
+		//GAMELOOP--------------------------------------]
 		while (running) {
 			startTime = System.nanoTime();			
 			render();

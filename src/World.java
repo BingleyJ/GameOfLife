@@ -7,7 +7,8 @@ public class World {
 	private int worldSizeX;
 	private int worldSizeY;
 	private boolean [][] world;
-	private boolean [][] futureWorld;;
+	private boolean [][] futureWorld;
+	boolean inBounds;
 	public int cellSize = 10;
 	private int connectedCells = 0;
 	private Helper helper = new Helper();
@@ -28,7 +29,7 @@ public class World {
 			for (int j = 0; j < worldSizeY; j++) {
 				connectedCells = 0;
 				//TOP LEFY CORNER OF ARRAY
-				if (i == 0 && j == 0){
+			/*	if (i == 0 && j == 0){
 					chks(i,j);
 					chke(i,j);
 					chkse(i,j);
@@ -82,9 +83,9 @@ public class World {
 					chksw(i,j);
 					chkn(i,j);
 					chks(i,j);
-				}
+				}*/
 				//MIDDLE GRID
-				else{
+			//	else{
 					chknw(i,j);
 					chkn(i,j);
 					chkne(i,j);
@@ -93,7 +94,7 @@ public class World {
 					chksw(i,j);
 					chks(i,j);
 					chkse(i,j);	
-				}
+			//	}
 				//IF CURRENT CELL IS ALIVE
 				if (world[i][j]){
 					if (connectedCells == 2 || connectedCells == 3){
@@ -115,7 +116,6 @@ public class World {
 			}
 		}
 		flushfutureworld();
-		
 	}
 	
 	public void Draw(Graphics2D crayon){
@@ -253,38 +253,56 @@ public class World {
 			Arrays.fill(arr, false);
 		}
 	}
-	
+
 	private void chknw(int inX, int inY){ 
-		if (world[inX - 1][inY - 1])
-			connectedCells++;
-	}
+		if ((inX - 1 >= 0 && inX < world.length) && (inY - 1 >= 0 && inY < world[inX].length)){
+			if (world[inX - 1][inY - 1])
+				connectedCells++;
+		}
+			}
+
 	private void chkn(int inX, int inY){ 
+		if ((inX >= 0 && inX < world.length) && (inY - 1 >= 0 && inY < world[inX].length)) {
 		if (world[inX][inY - 1])
 			connectedCells++;
+		}
 	}
 	private void chkne(int inX, int inY){ 
+		if ((inX >= 0 && inX + 1 < world.length) && (inY - 1 >= 0 && inY < world[inX].length)) {
 		if (world[inX + 1][inY - 1])
 			connectedCells++;
+		}
 	}
 	private void chke(int inX, int inY){ 
+		if ((inX >= 0 && inX + 1 < world.length) && (inY >= 0 && inY < world[inX].length)) {
 		if (world[inX + 1][inY])
 			connectedCells++;
+		}
 	}
 	private void chkw(int inX, int inY){ 
+		if ((inX - 1 >= 0 && inX < world.length) && (inY >= 0 && inY < world[inX].length)) {
 		if (world[inX - 1][inY])
 			connectedCells++;
+		}
 	}
 	private void chksw(int inX, int inY){ 
+		if ((inX - 1 >= 0 && inX < world.length) && (inY >= 0 && inY + 1 < world[inX].length)) {
 		if (world[inX - 1][inY + 1])
 			connectedCells++;
+		}
 	}
-	private void chks(int inX, int inY){ 
-		if (world[inX][inY + 1])
-			connectedCells++;
+
+	private void chks(int inX, int inY) {
+		if ((inX >= 0 && inX < world.length) && (inY >= 0 && inY + 1 < world[inX].length)) {
+			if (world[inX][inY + 1])
+				connectedCells++;
+		}
 	}
 	private void chkse(int inX, int inY){ 
+		if ((inX >= 0 && inX + 1 < world.length) && (inY >= 0 && inY + 1 < world[inX].length)) {
 		if (world[inX + 1][inY + 1])
 			connectedCells++;
+		}
 	}
 	public void randomWorld(){
 		for (int i = 0; i < worldSizeX; i++) {
