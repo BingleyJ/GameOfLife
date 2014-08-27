@@ -16,7 +16,7 @@ public class World {
 
 	
 	public World(int inWidth, int inHeight){
-		this.worldSizeX = inWidth / 10;
+		this.worldSizeX = //inWidth / 10;
 		this.worldSizeY = inHeight / 10;
 		world = new boolean [worldSizeX][worldSizeY];
 		futureWorld = new boolean [worldSizeX][worldSizeY];
@@ -24,77 +24,56 @@ public class World {
 		
 	}
 	
+	public void testCellCount(int inX, int inY){
+		int count = 0;
+		int i = inX;
+		int j = inY;
+		if (chknw(i,j))
+			count++;
+		if (chkn(i,j))
+			count++;
+		if (chkne(i,j))
+			count++;
+		if (chkw(i,j))
+			count++;
+		if (chke(i,j))
+			count++;
+		if (chksw(i,j))
+			count++;
+		if (chks(i,j))
+			count++;
+		if (chkse(i,j))
+			count++;
+		System.out.println("Connected cells to X" + i + " Y" + j + " = " + count);
+		if (world[i][j])
+			System.out.println("Cell is Alive");
+		if (!world[i][j])
+			System.out.println("Cell is Dead");
+
+	}
+	
+	
 	public void update(){
 		for (int i = 0; i < worldSizeX; i++) {
 			for (int j = 0; j < worldSizeY; j++) {
 				connectedCells = 0;
-				//TOP LEFY CORNER OF ARRAY
-			/*	if (i == 0 && j == 0){
-					chks(i,j);
-					chke(i,j);
-					chkse(i,j);
-				}
-				//TOP RIGHT CORNER OF ARRAY
-				else if (i == worldSizeX - 1 && j == 0){
-					chkw(i,j);
-					chksw(i,j);
-					chks(i,j);
-				}
-				//BOTTOM LEFT
-				else if (i == 0 && j == worldSizeY -1){
-					chkn(i,j);
-					chkne(i,j);
-					chke(i,j);
-				}
-				//BOTTOM RIGHT
-				else if (i== worldSizeX - 1 && j == worldSizeY - 1){
-					chkw(i,j);
-					chkn(i,j);
-					chknw(i,j);
-				}
-				//TOP ROW
-				else if (j == 0 && i > 0){
-					chksw(i,j);
-					chks(i,j);
-					chkse(i,j);
-					chke(i,j);
-					chkw(i,j);
-				}
-				//BOTTOM ROW
-				else if (j == worldSizeY - 1){
-					chkn(i,j);
-					chkne(i,j);
-					chknw(i,j);
-					chke(i,j);
-					chkw(i,j);
-				}
-				//LEFT ROW
-				else if (i == 0){
-					chkne(i,j);
-					chke(i,j);
-					chkse(i,j);
-					chkn(i,j);
-					chks(i,j);
-				}
-				//RIGHT ROW
-				else if (i == worldSizeX -1){
-					chkw(i,j);
-					chknw(i,j);
-					chksw(i,j);
-					chkn(i,j);
-					chks(i,j);
-				}*/
-				//MIDDLE GRID
-			//	else{
-					chknw(i,j);
-					chkn(i,j);
-					chkne(i,j);
-					chkw(i,j);
-					chke(i,j);
-					chksw(i,j);
-					chks(i,j);
-					chkse(i,j);	
-			//	}
+					if(chknw(i,j))
+						connectedCells++;
+					if(chkn(i,j))
+						connectedCells++;
+					if(chkne(i,j))
+						connectedCells++;
+					if(chkw(i,j))
+						connectedCells++;
+					if(chke(i,j))
+						connectedCells++;
+					if(chksw(i,j))
+						connectedCells++;
+					if(chks(i,j))
+						connectedCells++;
+					if(chkse(i,j))	
+						connectedCells++;
+
 				//IF CURRENT CELL IS ALIVE
 				if (world[i][j]){
 					if (connectedCells == 2 || connectedCells == 3){
@@ -110,8 +89,8 @@ public class World {
 			}
 		}
 		//COPY FUTURE TO PRESENT WORLD
-		for (int i = 0; i < worldSizeX - 1; i++){
-			for (int j = 0; j < worldSizeY - 1; j++){
+		for (int i = 0; i < worldSizeX ; i++){
+			for (int j = 0; j < worldSizeY; j++){
 				world[i][j] = futureWorld[i][j];
 			}
 		}
@@ -160,6 +139,14 @@ public class World {
 				}
 			}
 		}
+	}
+	
+	
+	public void spawnBottomThreeTest(){
+		world[30][worldSizeY - 1] = true;
+		world[32][worldSizeY - 1] = true;
+		world[31][worldSizeY - 2] = true;
+
 	}
 	
 	public void spawnGlider(){
@@ -254,56 +241,57 @@ public class World {
 		}
 	}
 
-	private void chknw(int inX, int inY){ 
+	private boolean chknw(int inX, int inY){ 
+		boolean hasFriend = false;
 		if ((inX - 1 >= 0 && inX < world.length) && (inY - 1 >= 0 && inY < world[inX].length)){
 			if (world[inX - 1][inY - 1])
-				connectedCells++;
+				hasFriend = true;
 		}
-			}
+		return hasFriend;
+	}
 
-	private void chkn(int inX, int inY){ 
+	private boolean chkn(int inX, int inY){ 
+		boolean hasFriend = false;
 		if ((inX >= 0 && inX < world.length) && (inY - 1 >= 0 && inY < world[inX].length)) {
-		if (world[inX][inY - 1])
-			connectedCells++;
-		}
-	}
-	private void chkne(int inX, int inY){ 
+			if (world[inX][inY - 1])
+				hasFriend = true;		}
+		return hasFriend;}
+	private boolean chkne(int inX, int inY){ 
+		boolean hasFriend = false;
 		if ((inX >= 0 && inX + 1 < world.length) && (inY - 1 >= 0 && inY < world[inX].length)) {
-		if (world[inX + 1][inY - 1])
-			connectedCells++;
-		}
-	}
-	private void chke(int inX, int inY){ 
+			if (world[inX + 1][inY - 1])
+				hasFriend = true;		}
+		return hasFriend;}
+	private boolean chke(int inX, int inY){
+		boolean hasFriend = false;
 		if ((inX >= 0 && inX + 1 < world.length) && (inY >= 0 && inY < world[inX].length)) {
-		if (world[inX + 1][inY])
-			connectedCells++;
-		}
-	}
-	private void chkw(int inX, int inY){ 
+			if (world[inX + 1][inY])
+				hasFriend = true;		}
+		return hasFriend;}
+	private boolean chkw(int inX, int inY){ 
+		boolean hasFriend = false;
 		if ((inX - 1 >= 0 && inX < world.length) && (inY >= 0 && inY < world[inX].length)) {
-		if (world[inX - 1][inY])
-			connectedCells++;
-		}
-	}
-	private void chksw(int inX, int inY){ 
+			if (world[inX - 1][inY])
+				hasFriend = true;		}
+		return hasFriend;}
+	private boolean chksw(int inX, int inY){ 
+		boolean hasFriend = false;
 		if ((inX - 1 >= 0 && inX < world.length) && (inY >= 0 && inY + 1 < world[inX].length)) {
-		if (world[inX - 1][inY + 1])
-			connectedCells++;
-		}
-	}
-
-	private void chks(int inX, int inY) {
+			if (world[inX - 1][inY + 1])
+				hasFriend = true;		}
+		return hasFriend;}
+	private boolean chks(int inX, int inY) {
+		boolean hasFriend = false;
 		if ((inX >= 0 && inX < world.length) && (inY >= 0 && inY + 1 < world[inX].length)) {
 			if (world[inX][inY + 1])
-				connectedCells++;
-		}
-	}
-	private void chkse(int inX, int inY){ 
+				hasFriend = true;		}
+		return hasFriend;}
+	private boolean chkse(int inX, int inY){ 
+		boolean hasFriend = false;
 		if ((inX >= 0 && inX + 1 < world.length) && (inY >= 0 && inY + 1 < world[inX].length)) {
-		if (world[inX + 1][inY + 1])
-			connectedCells++;
-		}
-	}
+			if (world[inX + 1][inY + 1])
+				hasFriend = true;		}
+		return hasFriend;}
 	public void randomWorld(){
 		for (int i = 0; i < worldSizeX; i++) {
 			for (int j = 0; j < worldSizeY; j++) {

@@ -140,11 +140,17 @@ public class LifePanel extends JPanel implements Runnable, KeyListener {
 			case KeyEvent.VK_5:
 				world.spawnBeacon();
 				break;
+			case KeyEvent.VK_9:
+				world.spawnBottomThreeTest();
+				break;
 			case KeyEvent.VK_T:
 				world.setTrippymode(true);
 				break;
 			case KeyEvent.VK_Y:
 				world.setTrippymode(false);
+				break;
+			case KeyEvent.VK_Z:
+				world.testCellCount(31, world.getWorldsizey() - 1);;
 				break;
 			case KeyEvent.VK_SPACE:
 				world.spawncells();

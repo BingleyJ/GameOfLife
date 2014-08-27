@@ -9,7 +9,7 @@ public class PopUps {
 	public PopUps(){
 		
 	}
-	public void drawWelcome() {
+	public		 void drawWelcome() {
 		String[] options = {"START"};
 		JPanel panel = new JPanel();
 		
